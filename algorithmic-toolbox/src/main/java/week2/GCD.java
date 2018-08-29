@@ -1,17 +1,31 @@
 package week2;
 
-import java.time.Duration;
-import java.time.LocalTime;
+import java.util.Scanner;
 
 public class GCD {
-    public static void main(String[] args) {
-        LocalTime now = LocalTime.now();
-        System.out.println(gcd(357,234));
-        System.out.println("Ran in " + Duration.between(now, LocalTime.now()));
+    public static int gcd_naive(int a, int b) {
+        int current_gcd = 1;
+        for (int d = 2; d <= a && d <= b; ++d) {
+            if (a % d == 0 && b % d == 0) {
+                if (d > current_gcd) {
+                    current_gcd = d;
+                }
+            }
+        }
+
+        return current_gcd;
     }
 
-    public static long gcd(long a, long b) {
+    public static int gcd(int a, int b) {
         if (b == 0) return a;
         else return gcd(b, a % b);
+    }
+
+    public static void main(String args[]) {
+        Scanner scanner = new Scanner(System.in);
+        int a = scanner.nextInt();
+        int b = scanner.nextInt();
+
+        System.out.println(gcd(a, b));
     }
 }

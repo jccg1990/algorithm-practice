@@ -1,34 +1,35 @@
 package week2;
 
-import java.time.Duration;
-import java.time.LocalTime;
+import java.util.Scanner;
 
 public class Fibonacci {
-    public static void main(String[] args) {
-        LocalTime now = LocalTime.now();
-        System.out.println(FibList(200));
-        System.out.println("Ran in " + Duration.between(now, LocalTime.now()));
-    }
-
-    public static long FibRecurs(long n) {
+    public static long calc_fib_slow(int n) {
         if (n <= 1)
             return n;
-        else
-            return FibRecurs(n - 1) + FibRecurs(n - 2);
 
+        return calc_fib_slow(n - 1) + calc_fib_slow(n - 2);
     }
 
-    public static long FibList(int n) {
+    public static long calc_fib(int n) {
         if (n <= 1)
             return n;
-        else {
-            long[] ar = new long[n];
-            ar[0] = 0;
-            ar[1] = 1;
-            for(int i =2; i < n; ++i){
-                ar[i] = ar[i-1] + ar[i-2];
-            }
-            return ar[n-1];
+
+        int[] fibArray = new int[n + 1];
+
+        fibArray[0] = 0;
+        fibArray[1] = 1;
+
+        for (int i = 2; i <= n; ++i) {
+            fibArray[i] = fibArray[i - 1] + fibArray[i - 2];
         }
+
+        return fibArray[n];
+    }
+
+    public static void main(String args[]) {
+        Scanner in = new Scanner(System.in);
+        int n = in.nextInt();
+
+        System.out.println(calc_fib(n));
     }
 }
