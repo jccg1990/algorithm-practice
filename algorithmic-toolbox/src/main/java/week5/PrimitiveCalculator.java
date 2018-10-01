@@ -1,3 +1,5 @@
+package week5;
+
 import java.util.*;
 import java.util.function.Function;
 
