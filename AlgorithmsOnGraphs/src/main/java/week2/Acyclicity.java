@@ -1,36 +1,40 @@
-package week1;
+package week2;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class ConnectedComponents {
+public class Acyclicity {
     private static ArrayList<Integer>[] adj;
-    private static boolean[] visited;
-    private static int[] ccNum;
-    private static int cc;
+    private static boolean[] startedVisit;
+    private static boolean[] finishedVisit;
 
-    private static int numberOfComponents() {
-        DFS();
-        return cc;
+    private static int acyclic() {
+        try {
+            DFS();
+        } catch (IllegalStateException e) {
+            return 1;
+        }
+        return 0;
     }
 
     private static void explore(int v) {
-        visited[v] = true;
-        ccNum[v] = cc;
+        startedVisit[v] = true;
 
         for (int n : adj[v]) {
-            if (!visited[n]) explore(n);
+            if (startedVisit[n] && !finishedVisit[n]) throw new IllegalStateException("Cyclic");
+            explore(n);
         }
+
+        finishedVisit[v] = true;
     }
 
     private static void DFS() {
-        visited = new boolean[adj.length];
-        ccNum = new int[adj.length];
+        finishedVisit = new boolean[adj.length];
+        startedVisit = new boolean[adj.length];
 
         for (int i = 0; i < adj.length; i++) {
-            if (!visited[i]) {
+            if (!finishedVisit[i]) {
                 explore(i);
-                cc++;
             }
         }
     }
@@ -51,9 +55,8 @@ public class ConnectedComponents {
             x = scanner.nextInt();
             y = scanner.nextInt();
             adj[x - 1].add(y - 1);
-            adj[y - 1].add(x - 1);
         }
-        System.out.println(numberOfComponents());
+        System.out.println(acyclic());
     }
 }
 

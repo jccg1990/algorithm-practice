@@ -7,10 +7,10 @@ class FibonacciTest {
     @Test
     void stressTest() {
         while (true) {
-            int n = Utils.getRandomInt(0, 45);
+            int n = Utils.getRandomInt(0, 200);
 
             long res1 = Fibonacci.calc_fib(n);
-            long res2 = Fibonacci.calc_fib_slow(n);
+            long res2 = Fibonacci.calcFib(n);
 
             System.out.println("Calculating the " + n + " number");
             if (res1 == res2) {
@@ -20,5 +20,12 @@ class FibonacciTest {
                 return;
             }
         }
+    }
+
+    @Test
+    void calcFibTest(){
+        int n = 1000;
+
+
     }
 }
