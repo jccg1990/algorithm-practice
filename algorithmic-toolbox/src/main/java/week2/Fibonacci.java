@@ -14,7 +14,7 @@ public class Fibonacci {
         if (n <= 1)
             return n;
 
-        int[] fibArray = new int[n + 1];
+        long[] fibArray = new long[n + 1];
 
         fibArray[0] = 0;
         fibArray[1] = 1;
@@ -24,6 +24,22 @@ public class Fibonacci {
         }
 
         return fibArray[n];
+    }
+
+    public static long calcFib(int m) {
+        if(m < 2) return m;
+
+        long first = 0;
+        long second = 1;
+        long res = 0;
+
+        for (int i = 2; i <= m; i++){
+            res = first + second;
+            first = second;
+            second = res;
+        }
+
+        return res;
     }
 
     public static void main(String args[]) {
