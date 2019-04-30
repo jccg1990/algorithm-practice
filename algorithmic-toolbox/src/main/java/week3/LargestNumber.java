@@ -1,8 +1,13 @@
-import java.util.*;
+package week3;
+
+import java.util.Arrays;
+import java.util.Scanner;
 
 public class LargestNumber {
     private static String largestNumber(String[] a) {
-        //write your code here
+
+        Arrays.sort(a, (x, y) -> (x + y).compareTo(y + x) * -1);
+
         String result = "";
         for (int i = 0; i < a.length; i++) {
             result += a[i];
