@@ -1,8 +1,5 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class HashSubstring {
 
@@ -30,26 +27,77 @@ public class HashSubstring {
     }
 
     private static List<Integer> getOccurrences(Data input) {
+        long p = 11621L;
+        long x = 1 + (long) (Math.random() * (p - 2));
+
         String s = input.pattern, t = input.text;
         int m = s.length(), n = t.length();
         List<Integer> occurrences = new ArrayList<Integer>();
-        for (int i = 0; i + m <= n; ++i) {
-	    boolean equal = true;
-	    for (int j = 0; j < m; ++j) {
-		if (s.charAt(j) != t.charAt(i + j)) {
-		     equal = false;
- 		    break;
-		}
-	    }
-            if (equal)
-                occurrences.add(i);
-	}
+
+        long patterHash = polyHash(s, p, x);
+        long[] H = precomputeHashes(t, m, p, x);
+
+        for (int i = 0; i <= n - m; ++i) {
+            if (patterHash != H[i]) continue;
+            else {
+                if (areEquals(s, t, i, i + m)) {
+                    occurrences.add(i);
+                }
+            }
+        }
+
         return occurrences;
+    }
+
+    static boolean areEquals(String pattern, String s, int start, int end) {
+        if (pattern.length() != end - start) {
+            return false;
+        }
+
+        for (int i = 0; i < pattern.length(); i++) {
+            if (pattern.charAt(i) != s.charAt(start + i)) return false;
+        }
+
+        return true;
+    }
+
+    static long[] precomputeHashes(String T, int P, long p, long x) {
+        long[] H = new long[T.length() - P + 1];
+        String s = T.substring(T.length() - P);
+
+        H[T.length() - P] = polyHash(s, p, x);
+
+        long y = 1;
+
+        for (int i = 0; i < P; i++) {
+            y = mod((y * x), p);
+        }
+
+        for (int i = T.length() - P - 1; i >= 0; i--) {
+            H[i] = mod((x * H[i + 1] + T.charAt(i) - y * T.charAt(i + P)), p);
+        }
+
+        return H;
+    }
+
+    static long mod(long a, long b) {
+        return ((a % b) + b) % b;
+    }
+
+    static long polyHash(String s, long p, long x) {
+        long hash = 0;
+
+        for (int i = s.length() - 1; i >= 0; i--) {
+            hash = mod((hash * x + s.charAt(i)), p);
+        }
+
+        return hash;
     }
 
     static class Data {
         String pattern;
         String text;
+
         public Data(String pattern, String text) {
             this.pattern = pattern;
             this.text = text;
