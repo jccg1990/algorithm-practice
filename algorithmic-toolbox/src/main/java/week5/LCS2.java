@@ -1,10 +1,18 @@
-import java.util.*;
+import java.util.Scanner;
 
 public class LCS2 {
 
     private static int lcs2(int[] a, int[] b) {
-        //Write your code here
-        return Math.min(a.length, b.length);
+        int[][] matrix = new int[a.length + 1][b.length + 1];
+
+        for (int i = 1; i < matrix.length; i++) {
+            for (int j = 1; j < matrix[0].length; j++) {
+                if (a[i - 1] == b[j - 1]) matrix[i][j] = matrix[i - 1][j - 1] + 1;
+                else matrix[i][j] = Math.max(matrix[i - 1][j], matrix[i][j - 1]);
+            }
+        }
+
+        return matrix[a.length][b.length];
     }
 
     public static void main(String[] args) {

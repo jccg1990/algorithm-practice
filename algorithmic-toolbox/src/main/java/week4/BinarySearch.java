@@ -3,25 +3,28 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 public class BinarySearch {
 
-    static int binarySearch(int[] a, int x) {
-        int left = 0, right = a.length - 1;
+    static int binarySearch(HashMap<Integer, Integer> a, int x) {
+        return a.getOrDefault(x, -1);
 
-        while (left <= right) {
-            int middle = ((right - left) / 2) + left;
-            if (x == a[middle]) {
-                return middle;
-            } else if (x < a[middle]) {
-                right = middle - 1;
-            } else {
-                left = middle + 1;
-            }
-        }
-
-        return -1;
+//        int left = 0, right = a.length - 1;
+//
+//        while (left <= right) {
+//            int middle = ((right - left) / 2) + left;
+//            if (x == a[middle]) {
+//                return middle;
+//            } else if (x < a[middle]) {
+//                right = middle - 1;
+//            } else {
+//                left = middle + 1;
+//            }
+//        }
+//
+//        return -1;
     }
 
     static int linearSearch(int[] a, int x) {
@@ -34,9 +37,9 @@ public class BinarySearch {
     public static void main(String[] args) {
         FastScanner scanner = new FastScanner(System.in);
         int n = scanner.nextInt();
-        int[] a = new int[n];
+        HashMap<Integer, Integer> a = new HashMap<>();
         for (int i = 0; i < n; i++) {
-            a[i] = scanner.nextInt();
+            a.put(scanner.nextInt(), i);
         }
         int m = scanner.nextInt();
         int[] b = new int[m];
@@ -45,7 +48,7 @@ public class BinarySearch {
         }
         for (int i = 0; i < m; i++) {
             //replace with the call to binarySearch when implemented
-            System.out.print(binarySearch(a, b[i]) + " ");
+            System.out.print(a.getOrDefault(b[i], -1) + " ");
         }
     }
 

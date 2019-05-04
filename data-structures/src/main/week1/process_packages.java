@@ -1,6 +1,5 @@
-package week1;
-
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -26,17 +25,29 @@ class Response {
 
 class Buffer {
     public Buffer(int size) {
-        this.size_ = size;
-        this.finish_time_ = new ArrayList<Integer>();
+        this.size = size;
+        this.finish_time = new ArrayDeque<Integer>();
     }
 
     public Response Process(Request request) {
-        // write your code here
-        return new Response(false, -1);
+        while (!finish_time.isEmpty() && finish_time.peek() <= request.arrival_time) {
+            currentTime = finish_time.poll();
+        }
+
+        if (finish_time.size() >= size) {
+            return new Response(true, -1);
+        } else {
+            if (!finish_time.isEmpty()) currentTime = finish_time.peekLast();
+            currentTime = Math.max(currentTime, request.arrival_time);
+
+            finish_time.offer(currentTime + request.process_time);
+            return new Response(false, currentTime);
+        }
     }
 
-    private int size_;
-    private ArrayList<Integer> finish_time_;
+    private int currentTime;
+    private int size;
+    private ArrayDeque<Integer> finish_time;
 }
 
 class process_packages {

@@ -1,5 +1,8 @@
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class StackWithMax {
     class FastScanner {
@@ -15,6 +18,7 @@ public class StackWithMax {
                 tok = new StringTokenizer(in.readLine());
             return tok.nextToken();
         }
+
         int nextInt() throws IOException {
             return Integer.parseInt(next());
         }
@@ -23,7 +27,7 @@ public class StackWithMax {
     public void solve() throws IOException {
         FastScanner scanner = new FastScanner();
         int queries = scanner.nextInt();
-        Stack<Integer> stack = new Stack<Integer>();
+        StackM stack = new StackM();
 
         for (int qi = 0; qi < queries; ++qi) {
             String operation = scanner.next();
@@ -33,7 +37,7 @@ public class StackWithMax {
             } else if ("pop".equals(operation)) {
                 stack.pop();
             } else if ("max".equals(operation)) {
-                System.out.println(Collections.max(stack));
+                System.out.println(stack.max());
             }
         }
     }
@@ -41,4 +45,33 @@ public class StackWithMax {
     static public void main(String[] args) throws IOException {
         new StackWithMax().solve();
     }
+}
+
+class StackM extends Stack {
+    Stack<Integer> aux = new Stack<>();
+
+    public Integer push(Integer item) {
+        super.push(item);
+
+        if (aux.isEmpty() || item.compareTo(aux.peek()) >= 0) {
+            aux.push(item);
+        }
+
+        return item;
+    }
+
+    public Integer pop() {
+        Integer obj = (Integer) super.pop();
+
+        if (!aux.isEmpty() && obj.compareTo(aux.peek()) == 0) {
+            aux.pop();
+        }
+
+        return obj;
+    }
+
+    public Integer max() {
+        return aux.peek();
+    }
+
 }

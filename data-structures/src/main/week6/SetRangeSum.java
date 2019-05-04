@@ -1,5 +1,7 @@
+package main.week6;
+
 import java.io.*;
-import java.util.*;
+import java.util.StringTokenizer;
 
 public class SetRangeSum {
 
@@ -12,7 +14,7 @@ public class SetRangeSum {
 
     // Vertex of a splay tree
     class Vertex {
-        int key;
+        long key;
         // Sum of all the keys in the subtree - remember to update
         // it after each operation that changes the tree.
         long sum;
@@ -20,7 +22,7 @@ public class SetRangeSum {
         Vertex right;
         Vertex parent;
 
-        Vertex(int key, long sum, Vertex left, Vertex right, Vertex parent) {
+        Vertex(long key, long sum, Vertex left, Vertex right, Vertex parent) {
             this.key = key;
             this.sum = sum;
             this.left = left;
@@ -99,8 +101,10 @@ public class SetRangeSum {
     class VertexPair {
         Vertex left;
         Vertex right;
+
         VertexPair() {
         }
+
         VertexPair(Vertex left, Vertex right) {
             this.left = left;
             this.right = right;
@@ -115,7 +119,7 @@ public class SetRangeSum {
     // bigger key (next value in the order).
     // If the key is bigger than all keys in the tree,
     // then result is null.
-    VertexPair find(Vertex root, int key) {
+    VertexPair find(Vertex root, long key) {
         Vertex v = root;
         Vertex last = root;
         Vertex next = null;
@@ -137,7 +141,7 @@ public class SetRangeSum {
         return new VertexPair(next, root);
     }
 
-    VertexPair split(Vertex root, int key) {
+    VertexPair split(Vertex root, long key) {
         VertexPair result = new VertexPair();
         VertexPair findAndRoot = find(root, key);
         root = findAndRoot.right;
@@ -173,7 +177,7 @@ public class SetRangeSum {
 
     Vertex root = null;
 
-    void insert(int x) {
+    void insert(long x) {
         Vertex left = null;
         Vertex right = null;
         Vertex new_vertex = null;
@@ -186,18 +190,98 @@ public class SetRangeSum {
         root = merge(merge(left, new_vertex), right);
     }
 
-    void erase(int x) {
-        // Implement erase yourself
+    void erase(long x) {
+        if (!find(x)) return;
+
+        delete(x);
+    }
+
+    void delete(long x) {
+        if (!find(x)) return;
+
+        splay(leftmost(root));
+        splay(root);
+        Vertex l = root.left;
+        Vertex r = root.right;
+
+        if (r != null) {
+            r.left = l;
+            if (l != null) l.parent = r;
+            root.left = null;
+            root.right = null;
+            root = r;
+            r.parent = null;
+            update(root);
+        } else if (l != null) {
+            root.left = null;
+            root = l;
+            l.parent = null;
+            update(root);
+        } else {
+            root.parent = null;
+            root = null;
+        }
 
     }
 
-    boolean find(int x) {
-        // Implement find yourself
+    //this is used after node x was found and rooted. we just look for the leftmost node on the right subtree
+    Vertex leftmost(Vertex root) {
+        if (root.right == null) {
+            return null;
+        }
 
-        return false;
+        Vertex node = root.right;
+
+        while (node.left != null) {
+            node = node.left;
+        }
+
+        return node;
     }
 
-    long sum(int from, int to) {
+    boolean find(long x) {
+        if (root == null) return false;
+
+        VertexPair pair = find(root, x);
+
+        Vertex prev = pair.left;
+        Vertex node = pair.right;
+
+        if (node != null) {
+            root = node;
+            return root.key == x;
+        } else {
+            root = prev;
+            return  false;
+        }
+
+
+//        Vertex node = root;
+//        Vertex prevNode = root;
+//
+//        //if node found result true, splay, root and break
+//        while (node != null) {
+//            if (node.key == x) {
+//                root = splay(node);
+//                root.parent = null;
+//                return true;
+//            } else if (x < node.key) {
+//                prevNode = node;
+//                node = node.left;
+//            } else {
+//                prevNode = node;
+//                node = node.right;
+//            }
+//        }
+//
+//        root = splay(prevNode);
+//        root.parent = null;
+//
+//        return false;
+    }
+
+
+    long sum(long from, long to) {
         VertexPair leftMiddle = split(root, from);
         Vertex left = leftMiddle.left;
         Vertex middle = leftMiddle.right;
@@ -205,45 +289,66 @@ public class SetRangeSum {
         middle = middleRight.left;
         Vertex right = middleRight.right;
         long ans = 0;
-        // Complete the implementation of sum
+
+        ans = middle != null ? middle.sum : 0;
+
+        root = merge(merge(left, middle), right);
 
         return ans;
     }
 
 
-    public static final int MODULO = 1000000001;
+    public static final long MODULO = 1000000001;
 
     void solve() throws IOException {
-        int n = nextInt();
-        int last_sum_result = 0;
+        long n = nextLong();
+        long last_sum_result = 0;
         for (int i = 0; i < n; i++) {
             char type = nextChar();
+            long x = 0;
             switch (type) {
-                case '+' : {
-                    int x = nextInt();
+                case '+': {
+                    x = nextLong();
                     insert((x + last_sum_result) % MODULO);
-                } break;
-                case '-' : {
-                    int x = nextInt();
+                }
+                break;
+                case '-': {
+                    x = nextLong();
                     erase((x + last_sum_result) % MODULO);
-                } break;
-                case '?' : {
-                    int x = nextInt();
+                }
+                break;
+                case '?': {
+                    x = nextLong();
                     out.println(find((x + last_sum_result) % MODULO) ? "Found" : "Not found");
-                } break;
-                case 's' : {
-                    int l = nextInt();
-                    int r = nextInt();
+                }
+                break;
+                case 's': {
+                    long l = nextLong();
+                    long r = nextLong();
                     long res = sum((l + last_sum_result) % MODULO, (r + last_sum_result) % MODULO);
                     out.println(res);
-                    last_sum_result = (int)(res % MODULO);
+                    last_sum_result = (res % MODULO);
                 }
             }
+//            out.println("*** " + i + " " + type + " " + (x + last_sum_result) % MODULO);
+//            printTree(root);
+//            out.println("");
         }
     }
 
+    void printTree(Vertex node) {
+        if (node == null) return;
+
+        printTree(node.left);
+
+        out.print(node.key + " -> ");
+
+        printTree(node.right);
+
+    }
+
     SetRangeSum() throws IOException {
-        br = new BufferedReader(new InputStreamReader(System.in));
+        br = new BufferedReader(new InputStreamReader(new FileInputStream("src/test/20")));
         out = new PrintWriter(System.out);
         solve();
         out.close();
@@ -265,9 +370,10 @@ public class SetRangeSum {
         return st.nextToken();
     }
 
-    int nextInt() throws IOException {
-        return Integer.parseInt(nextToken());
+    long nextLong() throws IOException {
+        return Long.parseLong(nextToken());
     }
+
     char nextChar() throws IOException {
         return nextToken().charAt(0);
     }
